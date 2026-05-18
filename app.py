@@ -1,15 +1,78 @@
 import streamlit as st
+from TTS.api import TTS
+import os
 
-st.title("🔊 Text to Speech (Cloud Version)")
+# ---------------- PAGE CONFIG ----------------
+st.set_page_config(
+    page_title="AI Text to Speech",
+    page_icon="🔊",
+    layout="centered"
+)
 
-text = st.text_area("Enter text")
+# ---------------- SIMPLE MOBILE UI ----------------
+st.markdown("""
+<style>
+.main {
+    padding: 1rem;
+}
 
-if st.button("Generate Speech"):
+button {
+    width: 100%;
+    height: 3em;
+    font-size: 18px !important;
+}
+
+audio {
+    width: 100%;
+}
+</style>
+""", unsafe_allow_html=True)
+
+# ---------------- TITLE ----------------
+st.title("🔊 AI Text-to-Speech")
+
+st.write("Convert text into speech using AI.")
+
+# ---------------- LOAD MODEL ----------------
+@st.cache_resource
+def load_model():
+    return TTS(model_name="tts_models/en/ljspeech/glow-tts")
+
+tts = load_model()
+
+# ---------------- INPUT ----------------
+text = st.text_area(
+    "Enter Text",
+    height=150,
+    placeholder="Type something..."
+)
+
+os.makedirs("outputs", exist_ok=True)
+
+# ---------------- GENERATE ----------------
+if st.button("🎤 Generate Speech"):
+
     if text.strip():
-        st.success("Cloud deployment successful!")
 
-        st.audio(
-            f"https://translate.google.com/translate_tts?ie=UTF-8&client=tw-ob&q={text}&tl=en"
-        )
+        output_path = "outputs/speech.wav"
+
+        with st.spinner("Generating speech..."):
+
+            tts.tts_to_file(
+                text=text,
+                file_path=output_path
+            )
+
+        st.success("Audio generated!")
+
+        st.audio(output_path)
+
+        with open(output_path, "rb") as f:
+            st.download_button(
+                "⬇ Download Audio",
+                f,
+                file_name="speech.wav"
+            )
+
     else:
-        st.warning("Please enter text")
+        st.warning("Please enter text.")
