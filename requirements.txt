@@ -1,5 +1,5 @@
-TTS
-streamlit
-torch
-numpy
-soundfile
+streamlit==1.35.0
+TTS==0.22.0
+torch==2.1.2
+numpy==1.26.4
+soundfile==0.12.1
