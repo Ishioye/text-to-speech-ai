@@ -36,7 +36,7 @@ st.write("Convert text into speech using AI.")
 # ---------------- LOAD MODEL ----------------
 @st.cache_resource
 def load_model():
-    return TTS(model_name="tts_models/en/ljspeech/tacotron2-DDC")
+    return TTS(model_name="tts_models/en/ljspeech/glow-tts")
 
 tts = load_model()
 
